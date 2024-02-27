@@ -280,8 +280,16 @@ function sortCitiesArray(arr) {
  *    "Poland" => ["Lodz"]
  *   }
  */
-function group(/* array, keySelector, valueSelector */) {
-  throw new Error('Not implemented');
+function group(array, keySelector, valueSelector) {
+  const multimap = new Map();
+  array.map((obj) => {
+    let cities = '';
+    if (multimap.get(keySelector(obj))) cities = multimap.get(keySelector(obj));
+    cities = [...cities, valueSelector(obj)];
+    multimap.set(keySelector(obj), cities);
+    return null;
+  });
+  return multimap;
 }
 
 /**
