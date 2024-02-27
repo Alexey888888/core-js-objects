@@ -160,7 +160,7 @@ function sellTickets(queue) {
     if (bill === 25) {
       obj.tf += 1;
     } else if (obj.tf * 25 >= bill) {
-      obj.tj -= bill / 25;
+      obj.tf -= bill / 25;
     } else res = false;
   });
   return res;
