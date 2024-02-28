@@ -347,32 +347,72 @@ function group(array, keySelector, valueSelector) {
  */
 
 const cssSelectorBuilder = {
-  element(/* value */) {
-    throw new Error('Not implemented');
+  res: '',
+  exception1:
+    'Element, id and pseudo-element should not occur more then one time inside the selector',
+  exception2:
+    'Selector parts should be arranged in the following order: element, id, class, attribute, pseudo-class, pseudo-element',
+
+  stringify() {
+    return this.res;
   },
 
-  id(/* value */) {
-    throw new Error('Not implemented');
+  element(value) {
+    if (this.res.includes('#')) throw Error(this.exception2);
+    if (this.res) throw Error(this.exception1);
+    const objRes = {};
+    Object.setPrototypeOf(objRes, cssSelectorBuilder);
+    objRes.res = `${this.res}${value}`;
+    return objRes;
   },
 
-  class(/* value */) {
-    throw new Error('Not implemented');
+  id(value) {
+    if (this.res.includes('.') || this.res.includes('::'))
+      throw Error(this.exception2);
+    if (this.res.includes('#')) throw Error(this.exception1);
+    const objRes = {};
+    Object.setPrototypeOf(objRes, cssSelectorBuilder);
+    objRes.res = `${this.res}#${value}`;
+    return objRes;
   },
 
-  attr(/* value */) {
-    throw new Error('Not implemented');
+  class(value) {
+    if (this.res.includes('[')) throw Error(this.exception2);
+    const objRes = {};
+    Object.setPrototypeOf(objRes, cssSelectorBuilder);
+    objRes.res = `${this.res}.${value}`;
+    return objRes;
   },
 
-  pseudoClass(/* value */) {
-    throw new Error('Not implemented');
+  attr(value) {
+    if (this.res.includes(':')) throw Error(this.exception2);
+    const objRes = {};
+    Object.setPrototypeOf(objRes, cssSelectorBuilder);
+    objRes.res = `${this.res}[${value}]`;
+    return objRes;
   },
 
-  pseudoElement(/* value */) {
-    throw new Error('Not implemented');
+  pseudoClass(value) {
+    if (this.res.includes('::')) throw Error(this.exception2);
+    const objRes = {};
+    Object.setPrototypeOf(objRes, cssSelectorBuilder);
+    objRes.res = `${this.res}:${value}`;
+    return objRes;
   },
 
-  combine(/* selector1, combinator, selector2 */) {
-    throw new Error('Not implemented');
+  pseudoElement(value) {
+    if (this.res.includes('::')) throw Error(this.exception1);
+    const objRes = {};
+    Object.setPrototypeOf(objRes, cssSelectorBuilder);
+    objRes.res = `${this.res}::${value}`;
+    return objRes;
+  },
+
+  combine(selector1, combinator, selector2) {
+    const objRes = {};
+    Object.setPrototypeOf(objRes, cssSelectorBuilder);
+    objRes.res = `${selector1.stringify()} ${combinator} ${selector2.stringify()}`;
+    return objRes;
   },
 };
 
